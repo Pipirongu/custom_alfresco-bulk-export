@@ -257,7 +257,7 @@ public class FileFolder
     public void insertFileProperties(String name, String nodeRef, String type, List<String> aspects,Map<String, String> properties, String filePath) throws Exception
     {
         String relPath = filePath;
-        String rootPath = "Company Home/Sites/metadata/";
+        String rootPath = "/Company Home/Sites/metadata/";
         filePath = this.basePath + filePath;
         String metadataFilePath = this.basePath + rootPath + name;
 
