@@ -23,13 +23,22 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 
 /**
@@ -80,7 +89,7 @@ public class FileFolder
      * 
      * @param path Path of Alfresco folder
      */
-    public void createFolder(String path) throws Exception 
+    public void createFolder(String path, Date created, Date modified) throws Exception
     {
         path = this.basePath + path;
         log.debug("createFolder path to create : " + path);
@@ -99,6 +108,10 @@ public class FileFolder
                     log.debug("createFolder path : " + path);
                 }
             }
+
+            Path pathf = Paths.get(dir.getAbsolutePath());
+            Files.setAttribute(pathf, "basic:creationTime", FileTime.fromMillis(created.getTime()), NOFOLLOW_LINKS);
+            Files.setAttribute(pathf, "basic:lastModifiedTime", FileTime.fromMillis(modified.getTime()), NOFOLLOW_LINKS);
         }
         catch (Exception e) 
         {

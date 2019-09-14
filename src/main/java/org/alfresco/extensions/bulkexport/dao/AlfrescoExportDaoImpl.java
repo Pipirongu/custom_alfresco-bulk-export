@@ -20,6 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +54,10 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.swing.text.AbstractDocument;
+
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 
 /**
@@ -169,6 +176,11 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
     public String getCmNameAsString(NodeRef nodeRef)
     {
         return nodeService.getProperty(nodeRef, ContentModel.PROP_NAME).toString();
+    }
+
+    public Date getDateProperty(NodeRef nodeRef, QName prop)
+    {
+        return (Date)nodeService.getProperty(nodeRef, prop);
     }
 
     /**
@@ -293,9 +305,15 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             // no data for this node
             return false;
         }
-       
+
         File output = new File(outputFileName);
         reader.getContent(output);
+
+        java.nio.file.Path path = Paths.get(output.getAbsolutePath());
+        Date createdTime = (Date)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED);
+        Date modifiedTime = (Date)nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+        Files.setAttribute(path, "basic:creationTime", FileTime.fromMillis(createdTime.getTime()), NOFOLLOW_LINKS);
+        Files.setAttribute(path, "basic:lastModifiedTime", FileTime.fromMillis(modifiedTime.getTime()), NOFOLLOW_LINKS);
 
         return true;
     }

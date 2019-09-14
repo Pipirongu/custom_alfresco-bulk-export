@@ -18,6 +18,7 @@ package org.alfresco.extensions.bulkexport.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,8 @@ public interface AlfrescoExportDao
     public Map<String, String> getPropertiesAsString(NodeRef nodeRef) throws Exception;
 
     public String getCmNameAsString(NodeRef nodeRef);
+
+    public Date getDateProperty(NodeRef nodeRef, QName prop);
 
     /**
      * Method to get children from node Reference 

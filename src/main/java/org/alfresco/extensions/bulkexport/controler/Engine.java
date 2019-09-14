@@ -18,15 +18,13 @@ package org.alfresco.extensions.bulkexport.controler;
 
 import java.io.ByteArrayOutputStream;
 
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.io.*;
 
 import org.alfresco.extensions.bulkexport.dao.AlfrescoExportDao;
 import org.alfresco.extensions.bulkexport.dao.NodeRefRevision;
 import org.alfresco.extensions.bulkexport.model.FileFolder;
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -347,10 +345,13 @@ public class Engine
         log.debug("createFolder type="+type);
         List<String> aspects = this.dao.getAspectsAsString(folder);
         Map<String, String> properties = this.dao.getPropertiesAsString(folder);
+
         
         //Create Folder and XMl Metadata
         String folderName = this.dao.getCmNameAsString(folder);
-        this.fileFolder.createFolder(path);
+        Date createdTime = this.dao.getDateProperty(folder, ContentModel.PROP_CREATED);
+        Date modifiedTime = this.dao.getDateProperty(folder, ContentModel.PROP_MODIFIED);
+        this.fileFolder.createFolder(path, createdTime, modifiedTime);
         this.fileFolder.insertFileProperties(folderName, folder.toString(), type, aspects, properties, path);
     }
 }
